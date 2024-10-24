@@ -4,7 +4,7 @@ import pickle
 import os
 import os.path as osp
 
-cache_path = './cache'
+cache_path = '/data/zhy/recommendation_system/Rec_sys/cache'
 
 def get_cache(file_name):
     file_path = osp.join(cache_path, file_name)
@@ -28,7 +28,7 @@ def get_user_data(is_all_data=False):
     return train_df
 
 def get_article_data():
-    article_df = pd.read_csv('data/articles.csv')
+    article_df = pd.read_csv('/data/zhy/recommendation_system/Rec_sys/data/articles.csv')
     article_df = article_df.rename(columns={'article_id': 'click_article_id'})
 
     return article_df
@@ -158,6 +158,10 @@ def get_user_history_click_item_info(user_df: pd.DataFrame):
 
     return user_category_dict, user_click_item_dict, user_words_dict, user_last_click_dict
 
+
+def get_top_k_items(user_df: pd.DataFrame, topk=50):
+    # topk_dict = {}
+    return user_df['click_article_id'].value_counts()[:topk]
 
 if __name__ == '__main__':
     user_data = get_user_data()

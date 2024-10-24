@@ -1,3 +1,5 @@
 cache
 data
 .vscode
+*.run
+*.tgz

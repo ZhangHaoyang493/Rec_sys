@@ -58,7 +58,35 @@ def cal_u2u_sim_matrix(item_user_item_dict):
             user_similar[i][j] /= math.sqrt(user_cnt[i] * user_cnt[j])
     
     save_to_cache('simple_user_similar_matrix.pkl', user_similar)
-            
+
+def item_cf_recall(user_id, user_item_time_dict, i2i_sim_matrix, topk_items, topk=5):
+    user_hist = user_item_time_dict[user_id]
+    
+    item_rank = {}
+    for i, t in user_hist.items():
+        sim_to_i = list(i2i_sim_matrix[i].items())
+        sim_to_i_sort = sorted(sim_to_i, key=lambda x: x[1], reverse=True)
+        for ii in sim_to_i_sort[:topk]:
+            if ii[0] in user_hist.keys():
+                continue
+            item_rank.setdefault(ii, 0)
+            item_rank += ii[1]
+    
+    # 如果不足topk个物品，用热门物品补全
+    if len(item_rank) < topk:
+        for item in topk_items:
+            if item in item_rank.keys():
+                continue
+            item_rank[item] = -1
+            if len(item_rank) == topk:
+                break
+    
+    item_rank = sorted(list(item_rank.items()), key=lambda x: x[1], reverse=True)[:topk]
+    return item_rank
+    
+        
+
+
 if __name__ == '__main__':
     user_df = get_user_data()
     user_item_time = get_user_item_dict(user_df)
